@@ -59,14 +59,14 @@ def start_client():
     while True:
         #Exibição das opções de área de suporte
         print("\nEscolha a área de suporte que deseja acessar:")
-        print("1. Financeiro")
+        print("1. Administrador")
         print("2. Logística")
         print("3. Atendimento")
         print("4. Sair do programa")
         area_choice = input("Digite o número da área: ")
 
         #Definição das áreas e portas correspondentes
-        areas = {"1": ("Financeiro", 5555), "2": ("Logistica", 5556), "3": ("Atendimento", 5557)}
+        areas = {"1": ("Administrador", 5555), "2": ("Logistica", 5556), "3": ("Atendimento", 5557)}
         area, port = areas.get(area_choice, (None, None))
 
         if area is None:

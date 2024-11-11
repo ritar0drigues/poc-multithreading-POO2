@@ -2,8 +2,8 @@ import socket
 import threading
 
 #Estrutura para armazenamento de clientes e gerentes por área
-clients = {"Financeiro": [], "Logistica": [], "Atendimento": []}
-managers = {"Financeiro": None, "Logistica": None, "Atendimento": None}
+clients = {"Administrador": [], "Logistica": [], "Atendimento": []}
+managers = {"Administrador": None, "Logistica": None, "Atendimento": None}
 messages = [] #Lista para armazenamento do histórico de todas as mensagens trocadas
 
 #Função para lidar com a comunicação de um cliente: recebendo as mensagens do cliente e as encaminhando para o gerente da área correspondente, se disponível.
@@ -95,6 +95,6 @@ def start_area_server(area, port):
 
 if __name__ == "__main__":
     #Iniciando o servidor para cada área em uma porta diferente, usando threads para cada uma
-    threading.Thread(target=start_area_server, args=("Financeiro", 5555)).start()
+    threading.Thread(target=start_area_server, args=("Administrador", 5555)).start()
     threading.Thread(target=start_area_server, args=("Logistica", 5556)).start()
     threading.Thread(target=start_area_server, args=("Atendimento", 5557)).start()
