@@ -30,7 +30,7 @@ class Server:
                     
                     #Encaminhamento da mensagem para o gerente da área, se disponível
                     if managers[area]:
-                        managers[area].send(f"[Cliente {address[0]}:{address[1]}] Pergunta: {message}".encode())
+                        managers[area].send(f"{message}".encode())
                         client_socket.send(f"Sua dúvida foi enviada para o gerente de {area}.".encode())
                     else:
                         client_socket.send(f"[Erro] Nenhum gerente disponível para {area} no momento.".encode())
@@ -79,33 +79,38 @@ class Server:
 
     def start_area_server(area, port):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Permite reutilização de portas
         server.bind(('localhost', port))
         server.listen(5)
-        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         print(f"Servidor de {area} rodando na porta {port}...\n")
 
         while True:
-            client_socket, address = server.accept()
-            role = client_socket.recv(1024).decode()
+            try:
+                client_socket, address = server.accept()
+                role = client_socket.recv(1024).decode()
 
-            # Verifica se o comando para encerrar o servidor foi enviado
-            if role == "shutdown_server":
-                print(f"[Servidor {area}] Encerrando servidor...")
-                for client in clients[area]:
-                    client.close()  # Fecha todas as conexões de clientes
-                if managers[area]:
-                    managers[area].close()  # Fecha a conexão do gerente, se existir
-                server.close()  # Fecha o socket do servidor
+                # Verifica se o comando para encerrar o servidor foi enviado
+                if role == "shutdown_server":
+                    print(f"[Servidor {area}] Encerrando servidor...")
+                    for client in clients[area]:
+                        client.close()  # Fecha todas as conexões de clientes
+                    if managers[area]:
+                        managers[area].close()  # Fecha a conexão do gerente, se existir
+                    server.close()  # Fecha o socket do servidor
+                    break
+
+                if role == "gerente":
+                    manager_thread = threading.Thread(target=Server.handle_manager, args=(client_socket, area))
+                    manager_thread.start()
+                elif role == "cliente":
+                    client_thread = threading.Thread(target=Server.handle_client, args=(client_socket, address, area))
+                    client_thread.start()
+            except Exception as e:
+                print(f"[Erro Servidor {area}] {e}")
+                server.close()
                 break
 
-
-            if role == "gerente":
-                manager_thread = threading.Thread(target=Server.handle_manager, args=(client_socket, area))
-                manager_thread.start()
-            elif role == "cliente":
-                client_thread = threading.Thread(target=Server.handle_client, args=(client_socket, address, area))
-                client_thread.start()
 
 
 if __name__ == "__main__":
