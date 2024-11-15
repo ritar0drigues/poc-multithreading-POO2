@@ -49,7 +49,7 @@ def start_manager():
 
     #Criação e conecção do socket do gerente à área escolhida
     manager_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    manager_socket.connect(('10.180.42.143', port))
+    manager_socket.connect(('localhost', port))
     manager_socket.send("gerente".encode()) #Envio de uma identificação ao servidor
 
     print(f"\nVocê está gerenciando a área de {area}.\n")

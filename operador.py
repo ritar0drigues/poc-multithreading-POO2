@@ -35,7 +35,7 @@ def send_messages(client_socket, stop_event):
 #Função para se conectar a uma área específica de suporte: conecta-se ao servidor na porta especificada e inicia threads para envio e recebimento de mensagens.
 def connect_to_area(area, port):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect(('10.180.42.143', port))
+    client_socket.connect(('localhost', port))
     client_socket.send("cliente".encode()) #Envio de uma identificação ao servidor
 
     print(f"Conectado à área de {area}.")
